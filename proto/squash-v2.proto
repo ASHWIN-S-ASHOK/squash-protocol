@@ -1,0 +1,83 @@
+// SQUASH v2 — Binary Protocol Specification (Reference Only)
+//
+// This .proto file documents the wire format used by SQUASH v2.
+// It is NOT compiled with protoc — the wire format is implemented
+// manually in pure Kotlin and Python for maximum KMP compatibility.
+//
+// The binary encoding follows standard Protocol Buffers wire format:
+//   - Varint (LEB128) for field tags and integer values
+//   - Length-delimited for strings, bytes, and embedded messages
+//   - Fixed32/Fixed64 for float/double values
+
+syntax = "proto3";
+
+package squash.v2;
+
+option java_package = "com.squash.v2";
+option java_multiple_files = true;
+
+// ─── Top-Level Binary Frame ──────────────────────────────────
+
+// Envelope for binary wire transport.
+// This is the outermost container sent over the wire when
+// Content-Type is application/squash+proto.
+message SquashBinaryFrame {
+  SquashMeta meta = 1;           // Required: protocol metadata
+  SquashDictionary dict = 2;     // Optional: sent when client dict is stale/missing
+  bytes payload = 3;           // Binary-encoded payload (varint-tagged fields)
+}
+
+// ─── Metadata ────────────────────────────────────────────────
+
+message SquashMeta {
+  uint32 version = 1;          // Protocol version (2 for binary mode)
+  string dict_id = 2;          // Dictionary ID, e.g. "user_v2"
+  EncodingType encoding = 3;   // Encoding mode used for the payload
+}
+
+enum EncodingType {
+  ENCODING_UNSPECIFIED = 0;
+  BINARY_MAP = 1;              // Field Tag (Varint) → Encoded Value
+  BINARY_ARRAY = 2;            // Ordered Packed Values (future)
+  PROTOBUF_DYNAMIC = 3;        // Full Protobuf dynamic mapping (future)
+}
+
+// ─── Dictionary ──────────────────────────────────────────────
+
+message SquashDictionary {
+  string dict_id = 1;
+
+  // Field Tag (1-based uint32) → Canonical JSON path
+  // e.g. { 1: "user.name", 2: "user.email", 3: "user.address.city" }
+  map<uint32, string> field_mappings = 2;
+
+  // Optional type hints for binary deserialization.
+  // Allows the reader to correctly interpret the wire type of each field.
+  map<uint32, FieldType> type_hints = 3;
+}
+
+enum FieldType {
+  TYPE_UNSPECIFIED = 0;
+  TYPE_STRING = 1;             // Wire type 2 (length-delimited)
+  TYPE_INT64 = 2;              // Wire type 0 (varint)
+  TYPE_DOUBLE = 3;             // Wire type 1 (fixed 64-bit)
+  TYPE_BOOL = 4;               // Wire type 0 (varint, 0 or 1)
+  TYPE_BYTES = 5;              // Wire type 2 (length-delimited)
+  TYPE_EMBEDDED = 6;           // Wire type 2 (nested SQUASH object)
+}
+
+// ─── Wire Format Notes ───────────────────────────────────────
+//
+// Protobuf Wire Types used:
+//   0 = Varint       (int32, int64, uint32, uint64, bool, enum)
+//   1 = 64-bit       (fixed64, sfixed64, double)
+//   2 = Length-delim  (string, bytes, embedded messages)
+//   5 = 32-bit       (fixed32, sfixed32, float)
+//
+// Field Tag Encoding:
+//   tag = (field_number << 3) | wire_type
+//   Encoded as a Varint.
+//
+// Example: field_number=1, wire_type=2 (string)
+//   tag = (1 << 3) | 2 = 0x0A
+//   Full encoding: 0x0A <varint_length> <utf8_bytes>

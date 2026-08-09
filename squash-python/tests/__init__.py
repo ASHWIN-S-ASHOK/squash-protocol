@@ -1,0 +1,1 @@
+"""SQUASH test package."""
