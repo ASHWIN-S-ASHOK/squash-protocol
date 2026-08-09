@@ -26,21 +26,19 @@ Designed for native mobile apps (iOS/Android) and server-to-server microservices
 
 *Tests run on a standard dictionary mapping containing various nested objects and primitive arrays.*
 
-| Payload Type | Format | Size | Savings | Time (ms) |
-|---|---|---|---|---|
-| **Large Array (500 Users)** | Raw JSON | 117.0 KB | 0% | 0.55 |
-| | SQUASH v1 (Positional JSON) | 66.0 KB | **43.5%** | 1.95 |
-| | SQUASH v2 (Binary) | 38.0 KB | **67.5%** | 7.00 |
-| | | | | |
-| **Massive Dictionary (~500KB)** | Raw JSON | 611.5 KB | 0% | 2.97 |
-| | SQUASH v1 (Positional JSON) | 294.2 KB | **52.0%** | 10.64 |
-| | SQUASH v2 (Binary) | 294.7 KB | **51.8%** | 35.30 |
-| | | | | |
-| **Worst-case (All Unique Keys)**| Raw JSON | 187.7 KB | 0% | 0.67 |
-| | SQUASH v1 (Positional JSON) | 98.9 KB | **47.3%** | 1.85 |
-| | SQUASH v2 (Binary) | 99.9 KB | **46.8%** | 5.41 |
-
-> **Note:** Because SQUASH v1 delegates its serialization to Python's highly optimized native C-backend, it executes significantly faster than v2 Binary while maintaining incredible compression on dense objects!
+| Payload Type | Format | Size | Savings |
+|---|---|---|---|
+| **Large Array (500 Users)** | Raw JSON | 117.0 KB | 0% |
+| | SQUASH v1 (Positional JSON) | 66.0 KB | **43.5%** |
+| | SQUASH v2 (Binary) | 38.0 KB | **67.5%** |
+| | | | |
+| **Massive Dictionary (~500KB)** | Raw JSON | 611.5 KB | 0% |
+| | SQUASH v1 (Positional JSON) | 294.2 KB | **52.0%** |
+| | SQUASH v2 (Binary) | 294.7 KB | **51.8%** |
+| | | | |
+| **Worst-case (All Unique Keys)**| Raw JSON | 187.7 KB | 0% |
+| | SQUASH v1 (Positional JSON) | 98.9 KB | **47.3%** |
+| | SQUASH v2 (Binary) | 99.9 KB | **46.8%** |
 
 ---
 
