@@ -61,6 +61,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
 // Configures publishing for all targets (Android, iOS, JVM, JS)
 publishing {
     publications.withType<MavenPublication> {
