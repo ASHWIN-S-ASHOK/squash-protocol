@@ -179,7 +179,7 @@ class BinarySquashEngine(
             val fieldTag = dictionary.reverseMappings[keyPath] ?: continue
             val fieldType = dictionary.typeFor(fieldTag)
 
-            writeFieldValue(writer, fieldTag, value, fieldType)
+            writeFieldValue(writer, fieldTag, value, fieldType, dictionary)
         }
 
         return writer.toByteArray()
@@ -220,6 +220,7 @@ class BinarySquashEngine(
         fieldTag: Int,
         value: JsonElement,
         fieldType: FieldType,
+        dictionary: BinaryDictionary,
     ) {
         when (value) {
             is JsonPrimitive -> {

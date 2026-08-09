@@ -6,7 +6,7 @@ plugins {
     id("signing")
 }
 
-group = "com.squash.protocol"
+group = "io.github.ashwin-s-ashok"
 version = "0.1.0"
 
 kotlin {

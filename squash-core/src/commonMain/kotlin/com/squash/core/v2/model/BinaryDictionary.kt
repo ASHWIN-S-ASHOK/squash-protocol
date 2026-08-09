@@ -1,4 +1,4 @@
-Benchmarkpackage com.squash.core.v2.model
+package com.squash.core.v2.model
 
 /**
  * SQUASH v2 binary dictionary.
