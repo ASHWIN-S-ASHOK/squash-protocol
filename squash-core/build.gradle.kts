@@ -61,17 +61,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
 // Configures publishing for all targets (Android, iOS, JVM, JS)
 publishing {
     publications.withType<MavenPublication> {
-        artifact(javadocJar)
+        val pubName = name
+        val javadocTask = tasks.register("${pubName}JavadocJar", Jar::class) {
+            archiveClassifier.set("javadoc")
+            destinationDirectory.set(layout.buildDirectory.dir("libs/javadoc-${pubName}"))
+        }
+        artifact(javadocTask)
         
         pom {
             name.set("Squash Protocol")
