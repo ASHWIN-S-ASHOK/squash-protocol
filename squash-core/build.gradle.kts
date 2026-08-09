@@ -64,9 +64,15 @@ android {
     }
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
 // Configures publishing for all targets (Android, iOS, JVM, JS)
 publishing {
     publications.withType<MavenPublication> {
+        artifact(javadocJar)
+        
         pom {
             name.set("Squash Protocol")
             description.set("Hybrid JSON Compact Protocol — schema-aware transport optimization for JSON payloads")
